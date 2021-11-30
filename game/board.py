@@ -6,7 +6,6 @@ from game.piece import Piece
 class Board:
     def __init__(self):
         self.board = []
-        self.selected_piece = None
         self.create_board()
         
     def draw_squares(self, win):
@@ -32,7 +31,7 @@ class Board:
                 if piece != 0:
                     piece.draw(win)
 
-    def add_piece(self, win, row, col):
+    def add_piece(self, win, row, col, color):
         self.draw_squares(win)
-        self.board[row][col] = Piece(row, col, RED)
+        self.board[row][col] = Piece(row, col, color)
         piece = self.board[row][col]

@@ -1,5 +1,5 @@
 import pygame
-from game.constants import SQUARE_SIZE, WIDTH, HEIGHT
+from game.constants import SQUARE_SIZE, WIDTH, HEIGHT, RED, WHITE
 from game.game import Game
 
 FPS = 60
@@ -19,7 +19,7 @@ def main():
 
     while run:
         clock.tick(FPS)
-        
+            
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
@@ -27,7 +27,11 @@ def main():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
                 row, col = get_row_col_from_mouse(pos)
-                game.make_move(row, col)
+                move = game.make_move(row, col)
+                if move != None:
+                    run = False
+                    print (f'WINNNER IS {move}')
+            
         game.update()
 
     pygame.quit()

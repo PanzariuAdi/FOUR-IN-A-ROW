@@ -29,3 +29,8 @@ class Piece:
         self.row = row
         self.col = col
         self.calc_pos()
+
+    def __eq__(self, other):
+        if not isinstance(other, Piece):
+            return False
+        return self.color == other.color

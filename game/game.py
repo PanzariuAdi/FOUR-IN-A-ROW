@@ -19,6 +19,9 @@ class Game:
     def reset(self):
         self._init()
 
+    def get_board(self):
+        return self.board
+
     def make_move(self, row, col):
         correct_row = -1
         for i in range (0, ROWS):
@@ -26,11 +29,18 @@ class Game:
                 correct_row = i
         if correct_row != -1:    
             self.board.add_piece(self.win, correct_row, col, self.turn)
-            possible_winner = self.check_winner(correct_row, col)
+            possible_winner = self.check_winner(self.board)
             if  possible_winner != None:
                 return possible_winner
             self.change_turn()  
         return None
+
+    def ai_move(self, board):
+        self.board = board
+        self.change_turn()
+
+    def get_turn(self):
+        return self.turn    
 
     def change_turn(self):
         if self.turn == RED:
@@ -38,75 +48,78 @@ class Game:
         else:
             self.turn = RED
     
-    def check_winner(self, row, col):
-        # COLUMN : LEFT <- CURRENT POSITION
-        score , count = 0, 0
-        for i in range(col, col - 4, -1):
-            if i >= 0 and i < COLS:
-                score, count = self._calculate_score_count(row, i, score, count)
-        if self._winner(score, count) != None:
-            return self._winner(score, count)
+    def check_winner(self, board):
+        for row in range(ROWS):
+            for col in range (COLS):
+                # COLUMN : LEFT <- CURRENT POSITION
+                score , count = 0, 0
+                for i in range(col, col - 4, -1):
+                    if i >= 0 and i < COLS:
+                        score, count = self._calculate_score_count(row, i, score, count, board)
+                if self._winner(score, count) != None:
+                    return self._winner(score, count)
 
-        # COLUMN : CURRENT POSITION -> RIGHT
-        score, count = 0, 0
-        for i in range(col, col + 4):
-            if i >= 0 and i < COLS:
-                score, count = self._calculate_score_count(row, i, score, count)
-        if self._winner(score, count) != None:
-            return self._winner(score, count)
+                # COLUMN : CURRENT POSITION -> RIGHT
+                score, count = 0, 0
+                for i in range(col, col + 4):
+                    if i >= 0 and i < COLS:
+                        score, count = self._calculate_score_count(row, i, score, count, board)
+                if self._winner(score, count) != None:
+                    return self._winner(score, count)
 
-        # ROW : CURRENT POSITION -> DOWN
-        score, count = 0, 0
-        for i in range (row, row + 4):
-            if i >= 0 and i < ROWS:
-                score, count = self._calculate_score_count(i, col, score, count)
-        if self._winner(score, count) != None:
-            return self._winner(score, count)
+                # ROW : CURRENT POSITION -> DOWN
+                score, count = 0, 0
+                for i in range (row, row + 4):
+                    if i >= 0 and i < ROWS:
+                        score, count = self._calculate_score_count(i, col, score, count, board)
+                if self._winner(score, count) != None:
+                    return self._winner(score, count)
 
-        # DIAGONAL : CURRENT POSITION -> TOP LEFT
-        score, count = 0, 0
-        correct_col = col
-        for i in range(row, row - 4, -1):
-            if i > 0 and i < ROWS and correct_col > 0:
-                score, count = self._calculate_score_count(i, correct_col, score, count)
-                correct_col -= 1
-        if self._winner(score, count) != None:
-            return self._winner(score, count)
+                # DIAGONAL : CURRENT POSITION -> TOP LEFT
+                score, count = 0, 0
+                correct_col = col
+                for i in range(row, row - 4, -1):
+                    if i > 0 and i < ROWS and correct_col > 0:
+                        score, count = self._calculate_score_count(i, correct_col, score, count, board)
+                        correct_col -= 1
+                if self._winner(score, count) != None:
+                    return self._winner(score, count)
 
-        # DIAGONAL : CURRENT POSITION -> TOP RIGHT
-        score, count = 0, 0
-        correct_col = col
-        for i in range (row, row - 4, -1):
-            if i > 0 and i < ROWS and correct_col < COLS:
-                score, count = self._calculate_score_count(i, correct_col, score, count)
-                correct_col += 1
-        if self._winner(score, count) != None:
-            return self._winner(score, count)
+                # DIAGONAL : CURRENT POSITION -> TOP RIGHT
+                score, count = 0, 0
+                correct_col = col
+                for i in range (row, row - 4, -1):
+                    if i > 0 and i < ROWS and correct_col < COLS:
+                        score, count = self._calculate_score_count(i, correct_col, score, count, board)
+                        correct_col += 1
+                if self._winner(score, count) != None:
+                    return self._winner(score, count)
 
-        # DIAGONAL : CURRENT POSITION -> DOWN LEFT
-        score, count = 0, 0
-        correct_col = col
-        for i in range (row, row + 4):
-            if i > 0 and i < ROWS and correct_col > 0:
-                score, count = self._calculate_score_count(i, correct_col, score, count)
-                correct_col -= 1
-        if self._winner(score, count) != None:
-            return self._winner(score, count)
+                # DIAGONAL : CURRENT POSITION -> DOWN LEFT
+                score, count = 0, 0
+                correct_col = col
+                for i in range (row, row + 4):
+                    if i > 0 and i < ROWS and correct_col > 0:
+                        score, count = self._calculate_score_count(i, correct_col, score, count, board)
+                        correct_col -= 1
+                if self._winner(score, count) != None:
+                    return self._winner(score, count)
 
-        # DIAGONAL : CURRENT POSITION -> DOWN RIGHT
-        score, count = 0, 0
-        correct_col = col
-        for i in range (row, row + 4):
-            if i > 0 and i < ROWS and correct_col < ROWS:
-                score, count = self._calculate_score_count(i, correct_col, score, count)
-                correct_col += 1
-        if self._winner(score, count) != None:
-            return self._winner(score, count)
+                # DIAGONAL : CURRENT POSITION -> DOWN RIGHT
+                score, count = 0, 0
+                correct_col = col
+                for i in range (row, row + 4):
+                    if i > 0 and i < ROWS and correct_col < ROWS:
+                        score, count = self._calculate_score_count(i, correct_col, score, count, board)
+                        correct_col += 1
+                if self._winner(score, count) != None:
+                    return self._winner(score, count)
 
         return None
 
-    def _calculate_score_count(self, row, column, score, count):
-        piece = self.board.get_piece(row, column)
+    def _calculate_score_count(self, row, column, score, count, board):
+        piece = board.get_piece(row, column)
+        # piece = board[row][column]
         if piece != 0:
             count += 1
             if piece.color == RED:

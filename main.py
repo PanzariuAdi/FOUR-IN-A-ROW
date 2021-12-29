@@ -1,6 +1,9 @@
+from copy import deepcopy
 import pygame
-from game.constants import SQUARE_SIZE, WIDTH, HEIGHT, RED, WHITE
+from game.board import Board
+from game.constants import ROWS, COLS, SQUARE_SIZE, WIDTH, HEIGHT, RED, WHITE
 from game.game import Game
+from algorithm.minimax import minimax
 
 FPS = 60
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -11,7 +14,7 @@ def get_row_col_from_mouse(pos):
     row = y // SQUARE_SIZE
     col = x // SQUARE_SIZE
     return row, col
-
+    
 def main():
     run = True
     clock = pygame.time.Clock()
@@ -19,7 +22,16 @@ def main():
 
     while run:
         clock.tick(FPS)
-            
+        
+
+        if game.turn == WHITE:
+            value, new_board = minimax(game.board, 3, False, game)
+            game.ai_move(new_board)
+        
+        if game.check_winner(game.board) != None:
+            print(game.check_winner(game.board))
+            run = False
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
@@ -27,13 +39,11 @@ def main():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
                 row, col = get_row_col_from_mouse(pos)
-                move = game.make_move(row, col)
-                if move != None:
-                    run = False
-                    print (f'WINNNER IS {move}')
-            
+                game.make_move(row, col)
+
         game.update()
 
     pygame.quit()
+
 
 main()

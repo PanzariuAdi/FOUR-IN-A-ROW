@@ -16,19 +16,23 @@ ai_player = False
 pygame.init()
 pygame.display.set_caption('4 in a row')
 
+
 def get_row_col_from_mouse(pos):
     x, y = pos
     row = y // SQUARE_SIZE
     col = x // SQUARE_SIZE
     return row, col
 
+
 def set_dificulty(dificulty, value):
     global ai_dificulty
     ai_dificulty = value
 
+
 def set_player(player, value):
     global ai_player
     ai_player = value
+
 
 def main():
     run = True
@@ -63,8 +67,10 @@ def main():
         game.update()
     
     menu.mainloop(WIN)
-    # pygame.quit()
 
+'''
+Main menu
+'''
 menu = pygame_menu.Menu('Welcome', 500, 500,
                        theme=pygame_menu.themes.THEME_DARK)
 menu.add.button('Play', main)
